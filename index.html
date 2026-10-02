@@ -1,0 +1,706 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Dhruv Singh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,400&display=swap">
+<script>
+  // apply the saved light/dark choice before the page paints (light by default)
+  try { if (localStorage.getItem('ds-mode') === 'dark') document.documentElement.setAttribute('data-mode', 'dark'); } catch (e) {}
+</script>
+<style>
+/* Layout: the standard ML-researcher homepage. One centred ~52rem column under a slim sticky nav that
+   works as tabs: one section is shown at a time, with prev/next links at the bottom of each.
+   Light by default; a toggle next to the name switches to dark (own data-mode attribute). */
+:root {
+  --bg: #FAFBFC;
+  --card: #FFFFFF;
+  --ink: #1F2328;
+  --ink-2: #5B6570;
+  --rule: #E3E6EA;
+  --link: #1772D0;
+  --link-ink: #FFFFFF;
+  --hover: #E8870E;
+  --badge: #0B3A75;
+  --badge-ink: #FFFFFF;
+  --badge-soft: #E7EDF5;
+  --badge-soft-ink: #31445C;
+  --hl: #FFF9DB;
+  --ok: #1D7349;
+  --wait: #9A6400;
+  --li: #0A66C2;
+  --shadow: rgba(15, 30, 50, 0.08);
+  --f-body: "Lato", "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+  color-scheme: light;
+}
+:root[data-mode="dark"] {
+  --bg: #1D1E20;
+  --card: #2A2B30;
+  --ink: #DCDDDE;
+  --ink-2: #9C9EA1;
+  --rule: #3A3C41;
+  --link: #6AAEF5;
+  --link-ink: #1D1E20;
+  --hover: #F3A64A;
+  --badge: #23466F;
+  --badge-ink: #EAF2FF;
+  --badge-soft: #33363D;
+  --badge-soft-ink: #B8C6D8;
+  --hl: #34301C;
+  --ok: #66C796;
+  --wait: #E3B653;
+  --li: #4C9BE8;
+  --shadow: rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s, color 0.25s;
+}
+a { color: var(--link); text-decoration: none; }
+a:hover { color: var(--hover); }
+:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 3px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+p { margin: 0; }
+ul { margin: 0; padding: 0; list-style: none; }
+button { font: inherit; }
+svg { display: block; }
+.math { font-family: "Times New Roman", Georgia, serif; font-style: italic; white-space: nowrap; }
+
+/* ---------- sticky nav (tabs) ---------- */
+.nav {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 20;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-in { max-width: 52rem; margin: 0 auto; padding-inline: 24px; display: flex; align-items: center; justify-content: space-between; gap: 0 1.25rem; min-height: 3.1rem; }
+.brand { display: flex; align-items: center; gap: 0.6rem; flex: none; }
+.nav-name { color: var(--ink); font-weight: 700; white-space: nowrap; }
+.nav-name:hover { color: var(--ink); }
+.mode { width: 2rem; height: 2rem; border-radius: 50%; border: 1px solid var(--rule); background: var(--card); color: var(--ink-2); display: grid; place-items: center; cursor: pointer; transition: color 0.15s, border-color 0.15s, transform 0.3s; }
+.mode:hover { color: var(--link); border-color: var(--link); }
+.mode svg { width: 1rem; height: 1rem; }
+.mode .sun { display: none; }
+:root[data-mode="dark"] .mode .sun { display: block; }
+:root[data-mode="dark"] .mode .moon { display: none; }
+.tabs { display: flex; gap: 1.3rem; overflow-x: auto; scrollbar-width: none; min-width: 0; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs a { display: block; padding-block: 0.85rem; font-size: 0.9rem; color: var(--ink-2); white-space: nowrap; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s; }
+.tabs a:hover { color: var(--ink); }
+.tabs a[aria-current="page"] { color: var(--link); border-bottom-color: var(--link); }
+@media (max-width: 640px) {
+  .nav-in { padding-inline: 16px; flex-wrap: wrap; padding-top: 0.5rem; }
+  .brand { width: 100%; justify-content: space-between; }
+  .tabs { width: 100%; gap: 1.1rem; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); padding-right: 1.5rem; }
+  .tabs a { padding-block: 0.6rem; font-size: 0.86rem; }
+}
+
+.page { max-width: 52rem; margin: 0 auto; padding-inline: 24px; padding-block: 2.5rem 2rem; display: grid; gap: 2.5rem; }
+@media (max-width: 480px) { .page { padding-inline: 16px; padding-block: 1.75rem 1.5rem; } }
+
+/* one view (tab) at a time */
+.view { display: grid; gap: 2.75rem; }
+.view.enter { animation: viewIn 0.28s ease both; }
+@keyframes viewIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.pager { display: flex; justify-content: space-between; gap: 1rem; border-top: 1px solid var(--rule); padding-top: 1rem; font-size: 0.92rem; }
+.pager a { display: inline-flex; flex-direction: column; gap: 0.05rem; max-width: 48%; }
+.pager a.next { margin-left: auto; text-align: right; }
+.pager small { font-size: 0.75rem; color: var(--ink-2); letter-spacing: 0.04em; text-transform: uppercase; }
+
+/* ---------- intro ---------- */
+.intro { display: flow-root; }
+.intro-text > * + * { margin-top: 0.9rem; }
+.intro h1 { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.005em; line-height: 1.1; }
+.intro .subtitle { margin-top: 0.35rem; color: var(--ink-2); font-size: 1rem; }
+.avatar-wrap { float: left; width: 11rem; margin: 0.4rem 1.75rem 0.75rem 0; }
+.avatar { width: 100%; height: auto; max-width: 100%; aspect-ratio: 1 / 1; border-radius: 6px; object-fit: cover; object-position: center top; display: block; border: 1px solid var(--rule); box-shadow: 0 8px 24px var(--shadow); }
+@media (max-width: 680px) {
+  .avatar-wrap { float: none; width: 9rem; margin: 0 auto 1.25rem; }
+  .intro h1, .intro .subtitle { text-align: center; }
+}
+
+/* ---------- sections ---------- */
+section { display: grid; gap: 1.1rem; }
+h2 { font-size: 1.35rem; font-weight: 400; padding-bottom: 0.35rem; border-bottom: 1px solid var(--rule); }
+.lead { max-width: 65ch; }
+.lead strong { font-weight: 700; }
+
+/* ---------- buttons (al-folio style) ---------- */
+.btns { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.15rem; }
+.btn { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.78rem; line-height: 1.5; padding: 0.05rem 0.6rem; border: 1px solid var(--link); border-radius: 3px; color: var(--link); background: transparent; cursor: pointer; text-transform: lowercase; letter-spacing: 0.02em; transition: background 0.15s, color 0.15s; }
+.btn:hover, .btn[aria-expanded="true"] { background: var(--link); color: var(--link-ink); }
+.btn .chev { display: inline-block; transition: transform 0.2s; font-size: 0.7rem; }
+.btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+
+.panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.25s ease; }
+.panel > div { min-height: 0; overflow: hidden; visibility: hidden; transition: visibility 0s 0.25s; }
+.panel.open { grid-template-rows: 1fr; }
+.panel.open > div { visibility: visible; transition: visibility 0s 0s; }
+.panel-box { margin-top: 0.6rem; padding: 0.85rem 1.1rem; border: 1px solid var(--rule); border-radius: 6px; background: var(--card); font-size: 0.9rem; }
+.panel-box ul { list-style: disc; padding-left: 1.1rem; display: grid; gap: 0.45rem; }
+.panel-box li::marker { color: var(--ink-2); }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; font-size: 0.88rem; font-variant-numeric: tabular-nums; min-width: 24rem; width: 100%; }
+caption { text-align: left; color: var(--ink-2); font-size: 0.82rem; padding-bottom: 0.4rem; }
+th, td { text-align: left; padding: 0.4rem 1rem 0.4rem 0; border-bottom: 1px solid var(--rule); }
+th { font-weight: 700; font-size: 0.8rem; color: var(--ink-2); }
+tr:last-child td { border-bottom: 0; }
+td.up { color: var(--ok); font-weight: 700; }
+@media (max-width: 560px) {
+  table { min-width: 0; font-size: 0.8rem; }
+  th, td { padding-right: 0.5rem; }
+  .panel-box { padding: 0.75rem 0.85rem; }
+}
+
+/* ---------- publications ---------- */
+.pubs { display: grid; gap: 0.9rem; }
+.pub { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 1.25rem; padding: 1.1rem 1.2rem; border-radius: 10px; background: var(--card); border: 1px solid var(--rule); transition: box-shadow 0.2s, transform 0.2s; }
+.pub:hover { box-shadow: 0 8px 22px var(--shadow); }
+.pub.hl, .pub.hl:hover { background: var(--hl); }
+.venue { align-self: start; display: grid; justify-items: center; gap: 0.1rem; padding: 0.55rem 0.4rem; border-radius: 4px; background: var(--badge); color: var(--badge-ink); text-align: center; line-height: 1.2; }
+.venue.soft { background: var(--badge-soft); color: var(--badge-soft-ink); }
+.venue b { font-size: 0.95rem; font-weight: 700; letter-spacing: 0.04em; }
+.venue span { font-size: 0.75rem; opacity: 0.85; }
+.pub-body { display: grid; gap: 0.3rem; min-width: 0; }
+.pub-title { font-size: 1.02rem; font-weight: 700; line-height: 1.35; color: var(--ink); }
+.pub-auth { font-size: 0.92rem; color: var(--ink-2); }
+.pub-auth .me { color: var(--ink); font-weight: 700; }
+.pub-venue { font-size: 0.92rem; font-style: italic; }
+.status { font-style: normal; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.03em; margin-left: 0.4rem; }
+.status.ok { color: var(--ok); }
+.pub-desc { font-size: 0.93rem; margin-top: 0.2rem; max-width: 65ch; }
+@media (max-width: 560px) {
+  .pub { grid-template-columns: minmax(0, 1fr); gap: 0.6rem; padding: 0.85rem 0.75rem; }
+  .venue { justify-self: start; grid-auto-flow: column; gap: 0.4rem; padding: 0.2rem 0.55rem; }
+}
+
+/* ---------- experience ---------- */
+.entries { display: grid; gap: 1.1rem; }
+.entry { display: grid; gap: 0.2rem; }
+.entry-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0 1rem; }
+.entry-head h3 { font-size: 1rem; font-weight: 700; }
+.entry-head h3 span { font-weight: 400; color: var(--ink-2); }
+.when { font-size: 0.88rem; color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.entry p { font-size: 0.93rem; max-width: 65ch; }
+.timeline { display: grid; gap: 0.25rem; }
+.tl { display: grid; grid-template-columns: 1rem minmax(0, 1fr); gap: 0.9rem; }
+.tl-rail { position: relative; }
+.tl-rail::before { content: ""; position: absolute; left: 50%; top: 0.55rem; bottom: -0.6rem; width: 1px; background: var(--rule); transform: translateX(-50%); }
+.tl:last-child .tl-rail::before { display: none; }
+.tl-dot { position: absolute; left: 50%; top: 0.45rem; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--card); border: 2px solid var(--link); transform: translateX(-50%); transition: background 0.2s; }
+.tl:hover .tl-dot { background: var(--link); }
+.tl .entry { padding-bottom: 0.9rem; }
+
+/* ---------- projects ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.chip { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.2rem 0.8rem; border: 1px solid var(--rule); border-radius: 999px; background: var(--card); color: var(--ink); font-size: 0.86rem; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+.chip .n { font-size: 0.75rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.chip:hover { border-color: var(--link); }
+.chip[aria-pressed="true"] { background: var(--badge); border-color: var(--badge); color: var(--badge-ink); }
+.chip[aria-pressed="true"] .n { color: var(--badge-ink); opacity: 0.8; }
+.projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem; }
+.proj { position: relative; display: grid; gap: 0.3rem; align-content: start; min-width: 0; padding: 1rem 1.15rem; border-radius: 10px; background: var(--card); border: 1px solid var(--rule); transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
+.proj:hover, .proj:focus-within { border-color: var(--link); box-shadow: 0 8px 22px var(--shadow); transform: translateY(-2px); }
+.proj h3 { font-size: 1rem; font-weight: 700; line-height: 1.35; }
+.proj h3 a { color: var(--ink); }
+.proj h3 a::after { content: ""; position: absolute; inset: 0; border-radius: 10px; }
+.proj h3 .arrow { color: var(--ink-2); font-weight: 400; display: inline-block; margin-left: 0.25rem; transition: transform 0.2s, color 0.2s; }
+.proj:hover h3 a { color: var(--link); }
+.proj:hover .arrow { color: var(--link); transform: translate(2px, -2px); }
+.proj .stack { font-size: 0.82rem; color: var(--ink-2); letter-spacing: 0.01em; }
+.proj p { font-size: 0.93rem; }
+.more { font-size: 0.93rem; }
+@media (max-width: 680px) { .projects { grid-template-columns: minmax(0, 1fr); } }
+
+.rows { display: grid; gap: 0.6rem; font-size: 0.95rem; }
+.rows li { display: flex; justify-content: space-between; gap: 1rem; padding-bottom: 0.6rem; border-bottom: 1px dashed var(--rule); }
+.rows li:last-child { border-bottom: 0; padding-bottom: 0; }
+
+.kv { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: 0.55rem 1.25rem; margin: 0; font-size: 0.95rem; }
+.kv dt { color: var(--ink-2); }
+.kv dd { margin: 0; min-width: 0; }
+@media (max-width: 480px) { .kv { grid-template-columns: minmax(0, 1fr); gap: 0; } .kv dd { margin-bottom: 0.6rem; } }
+
+.site-foot { display: grid; gap: 1.25rem; }
+.contact-card { display: grid; gap: 1.25rem; padding: 1.5rem; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; }
+.cc-head { display: grid; gap: 0.3rem; }
+.cc-title { font-size: 1.15rem; font-weight: 700; border: 0; padding: 0; }
+.cc-head p { color: var(--ink-2); font-size: 0.93rem; }
+.cc-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+.cc-item { display: flex; align-items: center; gap: 0.85rem; min-width: 0; padding: 0.8rem 0.95rem; border: 1px solid var(--rule); border-radius: 10px; background: var(--bg); color: var(--ink); text-align: left; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; }
+.cc-item:hover { color: var(--ink); border-color: var(--link); box-shadow: 0 6px 16px var(--shadow); transform: translateY(-1px); }
+.cc-ic { width: 2.3rem; height: 2.3rem; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--badge-soft); color: var(--badge-soft-ink); }
+.cc-ic svg { width: 1.05rem; height: 1.05rem; }
+.cc-ic.li { color: var(--li); }
+.cc-ic.gh { color: var(--ink); }
+.knock { fill: #FFFFFF; }
+.cc-txt { display: grid; min-width: 0; line-height: 1.35; }
+.cc-txt small { font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); }
+.cc-txt span { font-size: 0.93rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cc-act { margin-left: auto; flex: none; color: var(--ink-2); transition: color 0.15s; }
+.cc-act svg { width: 0.95rem; height: 0.95rem; }
+.cc-item:hover .cc-act { color: var(--link); }
+.copy { text-align: center; font-size: 0.82rem; color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 1rem; }
+@media (max-width: 560px) {
+  .contact-card { padding: 1.1rem; }
+  .cc-grid { grid-template-columns: minmax(0, 1fr); }
+  .cc-item { padding: 0.75rem 0.8rem; gap: 0.7rem; }
+  .cc-txt span { white-space: normal; overflow-wrap: anywhere; font-size: 0.9rem; }
+}
+
+/* ---------- toast + back to top ---------- */
+.toast { position: fixed; left: 50%; bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 0.5rem); background: var(--ink); color: var(--bg); font-size: 0.88rem; padding: 0.5rem 1rem; border-radius: 999px; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; z-index: 30; white-space: nowrap; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.totop { position: fixed; right: 1.25rem; bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)); width: 2.5rem; height: 2.5rem; border-radius: 50%; border: 1px solid var(--rule); background: var(--card); color: var(--ink); box-shadow: 0 6px 18px var(--shadow); cursor: pointer; display: grid; place-items: center; opacity: 0; transform: translateY(0.5rem); pointer-events: none; transition: opacity 0.2s, transform 0.2s, color 0.15s, border-color 0.15s; z-index: 25; }
+.totop.show { opacity: 1; transform: none; pointer-events: auto; }
+.totop:hover { color: var(--link); border-color: var(--link); }
+.totop svg { width: 1rem; height: 1rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation: none !important; }
+  .proj:hover, .proj:focus-within, .cc-item:hover { transform: none; }
+}
+</style>
+
+<nav class="nav" aria-label="Sections">
+  <div class="nav-in">
+    <div class="brand">
+      <a class="nav-name" href="#about" data-tab="about">Dhruv Singh</a>
+      <button class="mode" id="mode" type="button" aria-label="Switch to dark mode" title="Dark / light mode">
+        <svg class="moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M13.5 9.6A5.8 5.8 0 0 1 6.4 2.5a5.8 5.8 0 1 0 7.1 7.1Z"/></svg>
+        <svg class="sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1.2v1.6M8 13.2v1.6M1.2 8h1.6M13.2 8h1.6M3.2 3.2l1.1 1.1M11.7 11.7l1.1 1.1M3.2 12.8l1.1-1.1M11.7 4.3l1.1-1.1"/></svg>
+      </button>
+    </div>
+    <div class="tabs" role="list">
+      <a role="listitem" href="#about" data-tab="about">About</a>
+      <a role="listitem" href="#research" data-tab="research">Research</a>
+      <a role="listitem" href="#experience" data-tab="experience">Experience</a>
+      <a role="listitem" href="#projects" data-tab="projects">Projects</a>
+      <a role="listitem" href="#education" data-tab="education">Education</a>
+      <a role="listitem" href="#honors" data-tab="honors">Honors</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ===== About ===== -->
+  <div class="view" id="about" data-view data-title="About">
+    <header class="intro">
+      <div class="avatar-wrap">
+        <img class="avatar" src="portrait-sq2.jpg" alt="Photo of Dhruv Singh" width="560" height="560">
+      </div>
+      <div class="intro-text">
+        <h1>Dhruv Singh</h1>
+        <p class="subtitle">Final-year B.Tech, Mathematics &amp; Computing @ <a href="https://www.iitjammu.ac.in/" target="_blank" rel="noopener">IIT Jammu</a></p>
+        <p>My research is about making large neural networks smaller, safer and easier to understand. I work on structured pruning of LLMs without calibration data (SARATHI, accepted at EMNLP 2026, and LILA, currently under review), on defenses against model-extraction attacks, and on how activation steering acts inside Mixture-of-Experts models.</p>
+        <p>The mathematics I enjoy most is linear algebra and matrix analysis: low-rank and non-negative matrix factorization, singular-value spectra and perturbation bounds. I also lean on probability, robust statistics and second-order optimization. Most of my methods start from a question about the geometry of a weight matrix.</p>
+        <p>On the industry side, I've built Telugu speech and next-word prediction tools at Perceptive Analytics, action recognition for robotics at NavRobotec, and real-time posture feedback at Aadiyog Healthtech.</p>
+        <p>I'm looking for PhD or Master's positions starting in 2027.</p>
+      </div>
+    </header>
+  </div>
+
+  <!-- ===== Research ===== -->
+  <div class="view" id="research" data-view data-title="Research" hidden>
+    <section>
+      <h2>Research</h2>
+      <p class="lead">I'm interested in <strong>efficient deep learning</strong> (structured and unstructured pruning, calibration-free LLM compression), <strong>trustworthy and secure ML</strong> (model-extraction defenses, robustness) and <strong>explainable AI</strong> (structure-driven, data-free interpretability). My bachelor's thesis, <em>Sparsity, Structure, and Security: From Pruning at Initialization to Calibration-Free, Secure LLM Compression</em>, connects these threads. Accepted papers are highlighted.</p>
+
+      <div class="pubs">
+        <article class="pub hl">
+          <div class="venue"><b>EMNLP</b><span>2026</span></div>
+          <div class="pub-body">
+            <h3 class="pub-title">SARATHI: Decoupled Data-Free Probing &amp; Adaptive Reconstruction for LLM Pruning</h3>
+            <div class="pub-auth"><span class="me">Dhruv Singh</span> (second author)</div>
+            <div class="pub-venue">EMNLP 2026, Main Conference <span class="status ok">ACCEPTED</span></div>
+            <p class="pub-desc">Separates choosing which neurons to prune from compensating the weights that remain. A data-free NMF residual-subspace probe selects neurons, and an adaptive OBS step reconstructs each layer in <span class="math">O(d²)</span> memory. Reaches 15-40% sparsity on OPT-6.7B without running out of memory and up to 2.05× throughput on A100 GPUs.</p>
+            <div class="btns">
+              <button class="btn" type="button" aria-expanded="false" aria-controls="p1">details <span class="chev">▾</span></button>
+              <a class="btn" href="https://github.com/Dhruv2816/SARATHI_EMNLP" target="_blank" rel="noopener">code ↗</a>
+            </div>
+            <div class="panel" id="p1"><div><div class="panel-box">
+              <ul>
+                <li>A decoupled <strong>Probe-Reconstruct</strong> framework that removes calibration-domain bias and the <span class="math">O(Ld²)</span> global memory bottleneck, giving stable 15-40% sparsity on OPT-6.7B.</li>
+                <li>The <strong>NMF Residual Subspace Probe</strong> connects pruning to Robust PCA (<span class="math">|W| = VH + S</span>), with a safety bound that limits reconstruction error to <span class="math">O(τ√d ‖X‖<sub>F</sub>)</span> for low-importance neurons.</li>
+                <li><strong>Adaptive OBS Reconstruction</strong> from a 128-sample batch in <span class="math">O(d²)</span> memory per layer, with a global budget set by Median Absolute Deviation thresholding so no single layer collapses.</li>
+                <li>A closed-form <strong>Bias Shift Compensation</strong> that corrects activation drift in post-LayerNorm models at zero extra cost, sharply lowering WikiText-2 perplexity after pruning.</li>
+              </ul>
+            </div></div></div>
+          </div>
+        </article>
+
+        <article class="pub">
+          <div class="venue soft"><b>Review</b><span>2026</span></div>
+          <div class="pub-body">
+            <h3 class="pub-title">LILA: Calibration-Free Structured Pruning of LLMs via Latent Spectral Geometry</h3>
+            <div class="pub-auth"><span class="me">Dhruv Singh</span> (second author)</div>
+            <div class="pub-venue">Under review</div>
+            <p class="pub-desc">Scores FFN neurons with NMF and a closed-form KS-distance between singular-value spectra, keeping the native model graph. Beats PruneNet by up to 2.12 pp and SliceGPT by up to 6.1 pp in zero-shot accuracy, and the sensitivity variant prunes a 7B model in 3.3 minutes.</p>
+            <div class="btns">
+              <button class="btn" type="button" aria-expanded="false" aria-controls="p2">details <span class="chev">▾</span></button>
+              <button class="btn" type="button" aria-expanded="false" aria-controls="p2r">results <span class="chev">▾</span></button>
+            </div>
+            <div class="panel" id="p2"><div><div class="panel-box">
+              <ul>
+                <li>Uses non-negative matrix factorization to score and compress FFN layers, with no PCA rotations and no RMSNorm deletions.</li>
+                <li>The <strong>KS-Distance Spectrum Score</strong> compares the empirical CDFs of singular values of the full and ablated matrices.</li>
+                <li>Per-neuron <strong>randomized SVD</strong>, justified by Weyl's perturbation inequality, brings LILA-Spectrum to 54.3-70.5 minutes on a 7B model; LILA-Sensitivity takes 3.3 minutes (about 19× faster) and matches baselines after LoRA recovery.</li>
+                <li>Grounded in the <strong>Neural Tangent Kernel trace ratio</strong>: LILA-Residual gives <span class="math">ρ = 2.79</span> against 47.38 for random pruning, a 17× lower functional distortion.</li>
+              </ul>
+            </div></div></div>
+            <div class="panel" id="p2r"><div><div class="panel-box tbl">
+              <table>
+                <caption>Per-layer sparsity budgets vs. a uniform budget</caption>
+                <thead><tr><th>Model</th><th>Metric</th><th>Uniform</th><th>Per-layer</th></tr></thead>
+                <tbody>
+                  <tr><td>LLaMA-2-7B</td><td>Zero-shot accuracy</td><td>57.79%</td><td class="up">61.40%</td></tr>
+                  <tr><td>LLaMA-2-7B</td><td>Perplexity</td><td>10.92</td><td class="up">10.23</td></tr>
+                  <tr><td>Phi-2</td><td>Perplexity</td><td>43.30</td><td class="up">30.78</td></tr>
+                </tbody>
+              </table>
+            </div></div></div>
+          </div>
+        </article>
+
+        <article class="pub">
+          <div class="venue soft"><b>WIP</b><span>2026</span></div>
+          <div class="pub-body">
+            <h3 class="pub-title">Where Does Horizontal Steering Act in Mixture-of-Experts Models? Causal Mediation of Routing Drift</h3>
+            <div class="pub-auth"><span class="me">Dhruv Singh</span> (first author)</div>
+            <div class="pub-venue">Under preparation</div>
+            <p class="pub-desc">A four-pass causal mediation framework that splits activation-steering effects into routing, attention and expert pathways, across 10 steering methods on OLMoE and DeepSeek-V2-Lite.</p>
+            <div class="btns">
+              <button class="btn" type="button" aria-expanded="false" aria-controls="p3">details <span class="chev">▾</span></button>
+            </div>
+            <div class="panel" id="p3"><div><div class="panel-box">
+              <ul>
+                <li>A first-order mass-transfer identity predicts the routing effect (<span class="math">r</span> = 0.83 to 0.96), showing that routing drift supports steering rather than working against it.</li>
+                <li>Matched logit effects do not guarantee matched shifts in generated text.</li>
+                <li>An 8×A100 testbed with a 260-job scheduler and 290 tests reproduces 10 official baselines.</li>
+                <li>A new expert-drop criterion beats every published pruning criterion on both models.</li>
+              </ul>
+            </div></div></div>
+          </div>
+        </article>
+
+        <article class="pub">
+          <div class="venue soft"><b>WIP</b><span>2026</span></div>
+          <div class="pub-body">
+            <h3 class="pub-title">Stateful NMF Defense: A Sliding-Window Reconstruction and Latent-Entropy Framework against Model-Extraction Attacks</h3>
+            <div class="pub-auth"><span class="me">Dhruv Singh</span> (second author)</div>
+            <div class="pub-venue">Under preparation</div>
+            <p class="pub-desc">Tracks reconstruction error and latent entropy over a sliding window of queries. Cuts attacker accuracy to near chance (about 10%) on CIFAR-10 / ResNet-34 while keeping 83.4% clean accuracy.</p>
+            <div class="btns">
+              <button class="btn" type="button" aria-expanded="false" aria-controls="p4">details <span class="chev">▾</span></button>
+            </div>
+            <div class="panel" id="p4"><div><div class="panel-box">
+              <ul>
+                <li>Tested against KnockoffNet, JBDA-TR and defense-aware attacks (D-DAE, D-DAE+, pBayes).</li>
+                <li>Also validated on VGG-16-BN, CIFAR-100 and CUB-200.</li>
+                <li>Found a failure mode when attacker and victim data overlap (Caltech-256), which motivates ongoing work on task-adaptive calibration.</li>
+              </ul>
+            </div></div></div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== Experience ===== -->
+  <div class="view" id="experience" data-view data-title="Experience" hidden>
+    <section>
+      <h2>Experience</h2>
+      <div class="timeline">
+        <div class="tl">
+          <div class="tl-rail"><span class="tl-dot"></span></div>
+          <div class="entry">
+            <div class="entry-head"><h3>Advanced Analytics Engineer Intern <span>· Perceptive Analytics</span></h3><span class="when">Jun - Jul 2026</span></div>
+            <p>Built a Telugu Android keyboard and web app around an ASR → LLM speech-to-text pipeline, with live telemetry and over-the-air updates through Dockerized microservices. Fine-tuned Nandi-150M for next-word prediction and cut CPU inference latency by 90%, to 453 ms.</p>
+          </div>
+        </div>
+        <div class="tl">
+          <div class="tl-rail"><span class="tl-dot"></span></div>
+          <div class="entry">
+            <div class="entry-head"><h3>Deep Learning &amp; Computer Vision Intern <span>· NavRobotec</span></h3><span class="when">Sep 2025 - May 2026</span></div>
+            <p>Hierarchical action recognition (82.4% accuracy) with a multi-stream Pose Transformer and MobileNetV3-BiGRU. Self-attention over 30-frame skeletal clips captures long-range motion, and a gated pose/RGB fusion tells apart similar actions such as eating and drinking.</p>
+          </div>
+        </div>
+        <div class="tl">
+          <div class="tl-rail"><span class="tl-dot"></span></div>
+          <div class="entry">
+            <div class="entry-head"><h3>Data Scientist, Deep Learning &amp; CV <span>· Aadiyog Healthtech</span></h3><span class="when">May - Jul 2025</span></div>
+            <p>Real-time yoga posture feedback with MediaPipe BlazePose (94.2% accuracy over 15+ asanas, under 100 ms in a PWA), and a RAG + knowledge-graph pipeline that made diet and workout plans 35% more relevant.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== Projects ===== -->
+  <div class="view" id="projects" data-view data-title="Projects" hidden>
+    <section>
+      <h2>Projects</h2>
+      <div class="chips" role="group" aria-label="Filter projects">
+        <button class="chip" type="button" data-filter="all" aria-pressed="true">All <span class="n">8</span></button>
+        <button class="chip" type="button" data-filter="ml" aria-pressed="false">ML &amp; NLP <span class="n">4</span></button>
+        <button class="chip" type="button" data-filter="systems" aria-pressed="false">Systems <span class="n">3</span></button>
+        <button class="chip" type="button" data-filter="security" aria-pressed="false">Security <span class="n">2</span></button>
+      </div>
+      <div class="projects">
+        <div class="proj" data-tags="ml">
+          <h3><a href="https://github.com/Dhruv2816/Gujrati-Healthcare-SLM" target="_blank" rel="noopener">Gujarati Healthcare Assistant</a><span class="arrow" aria-hidden="true">↗</span></h3>
+          <div class="stack">Qwen2.5-3B · QLoRA · Neo4j · ChromaDB · Redis</div>
+          <p>A GraphRAG assistant that answers health questions in Gujarati. A medical knowledge graph and vector search ground a QLoRA-tuned 3B model, with Redis caching for repeat queries.</p>
+        </div>
+        <div class="proj" data-tags="ml">
+          <h3><a href="https://github.com/Dhruv2816/NLP-Semester-Project" target="_blank" rel="noopener">Hinglish Tokenizer</a><span class="arrow" aria-hidden="true">↗</span></h3>
+          <div class="stack">Unigram tokenizer · GPT-2 proxy LM · Hugging Face</div>
+          <p>A custom Unigram tokenizer for code-mixed Hindi-English with transliteration and particle seeding. Gave 28.4% lower evaluation loss than LLaMA-style byte BPE on a proxy language model.</p>
+        </div>
+        <div class="proj" data-tags="ml security">
+          <h3><a href="https://github.com/Dhruv2816/PI-Detector-and-Removal" target="_blank" rel="noopener">Hybrid PII Redaction</a><span class="arrow" aria-hidden="true">↗</span></h3>
+          <div class="stack">YOLOv8 · PaddleOCR · Streamlit</div>
+          <p>Finds and blacks out personal information in documents: YOLOv8 detects signatures and initials, while OCR plus pattern matching catches account, card and phone numbers.</p>
+        </div>
+        <div class="proj" data-tags="ml">
+          <h3><a href="https://github.com/Dhruv2816/Academic-Writing-Assistant" target="_blank" rel="noopener">Academic Writing Assistant</a><span class="arrow" aria-hidden="true">↗</span></h3>
+          <div class="stack">LoRA · multi-agent · RAG · arXiv API · MCP</div>
+          <p>A multi-agent system that summarizes papers with a LoRA-tuned model and answers questions about them through retrieval over ChromaDB, evaluated with BLEU and ROUGE.</p>
+        </div>
+        <div class="proj" data-tags="systems">
+          <h3><a href="https://github.com/Dhruv2816/fx-Lite" target="_blank" rel="noopener">FX-Lite + FX-Core</a><span class="arrow" aria-hidden="true">↗</span></h3>
+          <div class="stack">C++17 · Node.js · Express · SQLite</div>
+          <p>A currency-exchange backend with live rates and atomic wallet transfers, plus a C++ order matching engine built without the STL: 209k+ orders/sec at 1.64 µs average latency.</p>
+        </div>
+        <div class="proj" data-tags="systems">
+          <h3><a href="https://github.com/Dhruv2816/LakeHouse_MCP" target="_blank" rel="noopener">Local Lakehouse + MCP Server</a><span class="arrow" aria-hidden="true">↗</span></h3>
+          <div class="stack">DuckDB · dbt · Parquet · MCP</div>
+          <p>A zero-cloud data lakehouse: 300k synthetic transactions flow from Bronze to Silver to Gold under 14 dbt data tests, then an MCP server lets Claude query the warehouse directly.</p>
+        </div>
+        <div class="proj" data-tags="systems">
+          <h3><a href="https://github.com/Dhruv2816/CN_RUDP_Semester_Project" target="_blank" rel="noopener">Reliable UDP for P2P Games</a><span class="arrow" aria-hidden="true">↗</span></h3>
+          <div class="stack">C · C++ · Raylib · Wireshark (team project)</div>
+          <p>A custom reliable transport over raw UDP with a 16-byte header, Go-Back-N windows and Jacobson/Karels RTT estimation, driving a peer-to-peer multiplayer game and a Wireshark dissector.</p>
+        </div>
+        <div class="proj" data-tags="security">
+          <h3><a href="https://github.com/Dhruv2816/Infosec-DNS-Cache-Posioning" target="_blank" rel="noopener">DNS Cache Poisoning Lab</a><span class="arrow" aria-hidden="true">↗</span></h3>
+          <div class="stack">Python · Docker</div>
+          <p>An isolated Docker network that shows the attack on a weak resolver and the defenses that stop it: random ports, CSPRNG transaction IDs, TSIG signatures and rate limiting.</p>
+        </div>
+      </div>
+      <p class="more">More on <a href="https://github.com/Dhruv2816" target="_blank" rel="noopener">GitHub</a>.</p>
+    </section>
+  </div>
+
+  <!-- ===== Education ===== -->
+  <div class="view" id="education" data-view data-title="Education" hidden>
+    <section>
+      <h2>Education</h2>
+      <div class="entries">
+        <div class="entry">
+          <div class="entry-head"><h3>Indian Institute of Technology Jammu</h3><span class="when">2023 - 2027</span></div>
+          <p>B.Tech in Mathematics and Computing · CGPA 7.56 / 10</p>
+          <p>Bachelor's thesis: <em>Sparsity, Structure, and Security: From Pruning at Initialization to Calibration-Free, Secure LLM Compression</em></p>
+        </div>
+        <div class="entry">
+          <div class="entry-head"><h3>Mother Teresa Sr. Sec. Co-Ed School, Madhya Pradesh</h3><span class="when">2021 - 2023</span></div>
+          <p>CBSE Class XII: 94.6% · CBSE Class X: 93.6%</p>
+        </div>
+      </div>
+    </section>
+    <section>
+      <h2>Skills</h2>
+      <dl class="kv">
+        <dt>Languages</dt><dd>Python, C/C++, SQL, Java, JavaScript</dd>
+        <dt>ML</dt><dd>PyTorch, TensorFlow, Hugging Face, MediaPipe, NumPy, Pandas</dd>
+        <dt>Tools</dt><dd>Git, Docker, AWS, Linux, Node.js</dd>
+        <dt>Competitive</dt><dd>Codeforces: 1300+ rating<br>LeetCode: 500+ questions solved</dd>
+        <dt>Key courses</dt><dd>Linear Algebra, Probability, Statistics, Graph Theory, Number Theory, Machine Learning, Computer Vision, NLP, Algorithms, Operating Systems, Computer Networks, Information Security</dd>
+      </dl>
+    </section>
+  </div>
+
+  <!-- ===== Honors ===== -->
+  <div class="view" id="honors" data-view data-title="Honors" hidden>
+    <section>
+      <h2>Honors &amp; awards</h2>
+      <ul class="rows">
+        <li><span>Amazon ML Summer School, selected participant</span><span class="when">2026</span></li>
+        <li><span>Flipkart Grid, national semi-finalist (two editions)</span><span class="when">2025, 2026</span></li>
+        <li><span>Project K by Inside IIM × kukuFM, pre-final round winner</span><span class="when">2025</span></li>
+        <li><span>CTF winner (cybersecurity), Nexus @ IIT Jammu</span><span class="when">2025</span></li>
+      </ul>
+    </section>
+    <section>
+      <h2>Leadership</h2>
+      <ul class="rows">
+        <li><span>ML Head, Coding Club, IIT Jammu: mentored 150+ students with a team of 10 mentors, and ran a Gen AI workshop and hackathon with Pathway</span><span class="when">2024-25</span></li>
+        <li><span>AI Lead, Pragyaan Open Day: led a team of 6 showing six AI demos to 1,500+ visitors</span><span class="when">2025</span></li>
+        <li><span>Website Head, Sangam, IIT Jammu</span><span class="when">2024</span></li>
+        <li><span>Class Representative, Mathematics &amp; Computing</span><span class="when">2025-26</span></li>
+      </ul>
+    </section>
+  </div>
+
+  <footer class="site-foot">
+    <div class="contact-card" id="contact">
+      <div class="cc-head">
+        <h2 class="cc-title">Get in touch</h2>
+        <p>Happy to talk about research, collaborations and PhD or Master's positions.</p>
+      </div>
+      <div class="cc-grid">
+        <button class="cc-item" type="button" data-copy="dhruvsingh9893@gmail.com" title="Copy email">
+          <span class="cc-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="m2 4 6 5 6-5"/></svg></span>
+          <span class="cc-txt"><small>Email</small><span>dhruvsingh9893@gmail.com</span></span>
+          <span class="cc-act"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/></svg></span>
+        </button>
+        <button class="cc-item" type="button" data-copy="2023uma0210@iitjammu.ac.in" title="Copy email">
+          <span class="cc-ic"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M1 6 8 2.5 15 6 8 9.5Z"/><path d="M4 7.6V11c1 1 2.4 1.6 4 1.6s3-.6 4-1.6V7.6"/></svg></span>
+          <span class="cc-txt"><small>College email</small><span>2023uma0210@iitjammu.ac.in</span></span>
+          <span class="cc-act"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/></svg></span>
+        </button>
+        <a class="cc-item" href="https://www.linkedin.com/in/dhruv-singh-a05a32281/" target="_blank" rel="noopener">
+          <span class="cc-ic li"><svg viewBox="0 0 16 16" aria-hidden="true"><rect width="16" height="16" rx="3" fill="currentColor"/><circle class="knock" cx="4.4" cy="4.4" r="1.25"/><rect class="knock" x="3.3" y="6.4" width="2.2" height="6.3"/><path class="knock" d="M7.1 6.4h2.1v.9c.35-.6 1.1-1.1 2.2-1.1 2 0 2.5 1.25 2.5 3v3.5h-2.2V9.6c0-.8-.2-1.55-1.1-1.55-.95 0-1.3.65-1.3 1.6v3.05H7.1Z"/></svg></span>
+          <span class="cc-txt"><small>LinkedIn</small><span>Dhruv Singh</span></span>
+          <span class="cc-act"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 3h7v7M13 3 4 12"/></svg></span>
+        </a>
+        <a class="cc-item" href="https://github.com/Dhruv2816" target="_blank" rel="noopener">
+          <span class="cc-ic gh"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></span>
+          <span class="cc-txt"><small>GitHub</small><span>github.com/Dhruv2816</span></span>
+          <span class="cc-act"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 3h7v7M13 3 4 12"/></svg></span>
+        </a>
+      </div>
+    </div>
+    <p class="copy">© 2026 Dhruv Singh · Last updated October 2026</p>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="totop" id="totop" type="button" aria-label="Back to top"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg></button>
+
+<script>
+(function () {
+  var root = document.documentElement;
+
+  // ---------- light / dark toggle ----------
+  var modeBtn = document.getElementById('mode');
+  function syncModeLabel() {
+    var dark = root.getAttribute('data-mode') === 'dark';
+    modeBtn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+  modeBtn.addEventListener('click', function () {
+    var dark = root.getAttribute('data-mode') !== 'dark';
+    if (dark) root.setAttribute('data-mode', 'dark'); else root.removeAttribute('data-mode');
+    try { localStorage.setItem('ds-mode', dark ? 'dark' : 'light'); } catch (e) {}
+    syncModeLabel();
+  });
+  syncModeLabel();
+
+  // ---------- one section at a time ----------
+  var views = Array.prototype.slice.call(document.querySelectorAll('[data-view]'));
+  var ids = views.map(function (v) { return v.id; });
+  var tabLinks = document.querySelectorAll('.tabs a');
+
+  // prev / next links at the bottom of each view
+  views.forEach(function (v, i) {
+    var pager = document.createElement('div');
+    pager.className = 'pager';
+    if (i > 0) pager.innerHTML += '<a href="#' + ids[i - 1] + '" data-tab="' + ids[i - 1] + '"><small>Previous</small>← ' + views[i - 1].dataset.title + '</a>';
+    if (i < views.length - 1) pager.innerHTML += '<a class="next" href="#' + ids[i + 1] + '" data-tab="' + ids[i + 1] + '"><small>Next</small>' + views[i + 1].dataset.title + ' →</a>';
+    v.appendChild(pager);
+  });
+
+  function show(id, animate) {
+    if (ids.indexOf(id) < 0) id = 'about';
+    views.forEach(function (v) {
+      var on = v.id === id;
+      v.hidden = !on;
+      v.classList.remove('enter');
+      if (on && animate) { void v.offsetWidth; v.classList.add('enter'); }
+    });
+    tabLinks.forEach(function (a) {
+      if (a.dataset.tab === id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+    });
+    var active = document.querySelector('.tabs a[aria-current]');
+    if (active && active.scrollIntoView) { try { active.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (e) {} }
+  }
+
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[data-tab]');
+    if (!a) return;
+    e.preventDefault();
+    var id = a.dataset.tab;
+    show(id, true);
+    window.scrollTo(0, 0);
+    try { history.replaceState(null, '', '#' + id); } catch (err) {}
+  });
+  window.addEventListener('hashchange', function () { show(location.hash.slice(1), true); });
+  show(location.hash.slice(1), false);
+
+  // ---------- expandable details / results ----------
+  document.querySelectorAll('.btn[aria-controls]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var panel = document.getElementById(btn.getAttribute('aria-controls'));
+      var open = btn.getAttribute('aria-expanded') !== 'true';
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      panel.classList.toggle('open', open);
+    });
+  });
+
+  // ---------- project filters ----------
+  var chips = document.querySelectorAll('.chip');
+  var projs = document.querySelectorAll('.proj');
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      var f = chip.dataset.filter;
+      chips.forEach(function (c) { c.setAttribute('aria-pressed', c === chip ? 'true' : 'false'); });
+      projs.forEach(function (p) { p.hidden = !(f === 'all' || p.dataset.tags.split(' ').indexOf(f) > -1); });
+    });
+  });
+
+  // ---------- copy email ----------
+  var toast = document.getElementById('toast');
+  var tTimer;
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(tTimer);
+    tTimer = setTimeout(function () { toast.classList.remove('show'); }, 1800);
+  }
+  document.querySelectorAll('[data-copy]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var text = b.dataset.copy;
+      function fallback() {
+        var r = document.createRange(); r.selectNodeContents(b);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        showToast('Selected. Press Ctrl+C to copy');
+      }
+      try {
+        navigator.clipboard.writeText(text).then(function () { showToast('Copied ' + text); }, fallback);
+      } catch (e) { fallback(); }
+    });
+  });
+
+  // ---------- back to top ----------
+  var totop = document.getElementById('totop');
+  function onScroll() { totop.classList.toggle('show', window.scrollY > 600); }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  totop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+})();
+</script>
+
+</body></html>
