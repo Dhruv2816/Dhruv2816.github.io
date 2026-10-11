@@ -374,23 +374,23 @@ td.up { color: var(--ok); font-weight: 700; }
             </div></div></div>
           </div>
         </article>
-
+  
         <article class="pub">
           <div class="venue soft"><b>WIP</b><span>2026</span></div>
           <div class="pub-body">
-            <h3 class="pub-title">Where Does Horizontal Steering Act in Mixture-of-Experts Models? Causal Mediation of Routing Drift</h3>
+            <h3 class="pub-title">Where Does Steering Act in Mixture-of-Experts Models? Causal Mediation of Routing Drift</h3>
             <div class="pub-auth"><span class="me"></span></div>
-            <div class="pub-venue">Under preparation</div>
-            <p class="pub-desc">A four-pass causal mediation framework that splits activation-steering effects into routing, attention and expert pathways, across 10 steering methods on OLMoE and DeepSeek-V2-Lite.</p>
+            <div class="pub-venue">Preprint in preparation</div>
+            <p class="pub-desc">A causal mediation framework with exact routing replay that splits activation-steering effects into routing and non-routing paths, across 10 steering methods, 5 MoE LLMs (OLMoE, DeepSeek-V2-Lite, Mixtral, Qwen3-30B, GPT-OSS-20B) and 6 behaviours.</p>
             <div class="btns">
               <button class="btn" type="button" aria-expanded="false" aria-controls="p3">details <span class="chev">▾</span></button>
             </div>
             <div class="panel" id="p3"><div><div class="panel-box">
               <ul>
-                <li>A first-order mass-transfer identity predicts the routing effect (<span class="math">r</span> = 0.83 to 0.96), showing that routing drift supports steering rather than working against it.</li>
-                <li>Matched logit effects do not guarantee matched shifts in generated text.</li>
-                <li>An 8×A100 testbed with a 260-job scheduler and 290 tests reproduces 10 official baselines.</li>
-                <li>A new expert-drop criterion beats every published pruning criterion on both models.</li>
+                <li>Routing carries language steering but not refusal: freezing the router removes 97% of the language effect, and the closest prior method (RARE) removes 92% of it while leaving refusal almost unchanged.</li>
+                <li>Mean-pooled steering vectors are 96–100% attention-sink token, which silently disables language steering; removing massive positions restores it (Hindi rate 0.00 → 0.47–0.99).</li>
+                <li>Routing-level steering methods with large logit effects produce almost no generated refusals, so logit effects do not guarantee changes in generated text.</li>
+                <li>A 16×A100 testbed (370+ scheduled jobs, 406 tests, replay error 0) with official-code ports of 10 published baselines and 30-seed random-expert controls.</li>
               </ul>
             </div></div></div>
           </div>
